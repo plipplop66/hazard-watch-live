@@ -2,9 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import {
   Activity,
   AlertTriangle,
+  ChevronDown,
   CloudRain,
   CloudSun,
-  Compass,
   Droplets,
   Gauge,
   LocateFixed,
@@ -57,6 +57,8 @@ type Hazard = {
   severity: "critical" | "watch";
   source: string;
 };
+
+type TimeMode = "morning" | "day" | "evening" | "night";
 
 function Dashboard() {
   const [location, setLocation] = useState<Location>(defaultLocation);
@@ -179,9 +181,10 @@ function Dashboard() {
   const nextWetHour = snapshot?.hourly.find(
     (hour) => hour.precipitationProbability >= 40 || hour.precipitation > 0.2,
   );
+  const timeMode = getTimeMode(clock, snapshot?.timezone);
 
   return (
-    <main className="hazard-app">
+    <main className={`hazard-app mode-${timeMode}`}>
       <div className="ambient ambient-one" />
       <div className="ambient ambient-two" />
 
@@ -203,7 +206,9 @@ function Dashboard() {
             <div className="local-time">
               <span className="meta-label">Current local time</span>
               <strong>{formatClock(clock, snapshot?.timezone)}</strong>
-              <span>{formatDate(clock, snapshot?.timezone)}</span>
+              <span>
+                {formatDate(clock, snapshot?.timezone)} · {timeMode} mode
+              </span>
             </div>
             <div className="live-indicator" aria-label="Live data updates every minute">
               <span className="live-dot" />
@@ -325,6 +330,30 @@ function Dashboard() {
             >
               <RefreshCw size={15} className={isRefreshing ? "spinning" : ""} /> Refresh now
             </button>
+            {snapshot && (
+              <details className="more-details">
+                <summary>
+                  More metrics <ChevronDown size={14} aria-hidden="true" />
+                </summary>
+                <div className="details-menu">
+                  <DetailItem
+                    label="Feels like"
+                    value={`${snapshot.apparentTemperature.toFixed(1)}°C`}
+                  />
+                  <DetailItem label="Rain now" value={`${snapshot.rain.toFixed(1)} mm`} />
+                  <DetailItem label="Wind gusts" value={`${snapshot.windGusts.toFixed(0)} km/h`} />
+                  <DetailItem
+                    label="Wind direction"
+                    value={`${directionLabel(snapshot.windDirection)} · ${snapshot.windDirection.toFixed(0)}°`}
+                  />
+                  <DetailItem label="Current state" value={describeWeather(snapshot.weatherCode)} />
+                  <DetailItem
+                    label="24h rain outlook"
+                    value={`${forecastRain.toFixed(1)} mm · up to ${Math.max(...snapshot.hourly.map((hour) => hour.precipitationProbability)).toFixed(0)}%`}
+                  />
+                </div>
+              </details>
+            )}
           </div>
         </section>
 
@@ -465,32 +494,6 @@ function Dashboard() {
                   </div>
                 )}
               </section>
-
-              <aside className="panel data-panel">
-                <p className="panel-eyebrow">Data integrity</p>
-                <h2>Live, traceable values</h2>
-                <p>
-                  Every value on this dashboard is fetched from the weather provider. There is no
-                  simulated telemetry.
-                </p>
-                <dl>
-                  <div>
-                    <dt>Source</dt>
-                    <dd>Open-Meteo Forecast API</dd>
-                  </div>
-                  <div>
-                    <dt>Refresh cadence</dt>
-                    <dd>Every 60 seconds</dd>
-                  </div>
-                  <div>
-                    <dt>Data type</dt>
-                    <dd>Model-based conditions</dd>
-                  </div>
-                </dl>
-                <a href="https://open-meteo.com/en/docs" target="_blank" rel="noreferrer">
-                  View provider documentation <Compass size={15} />
-                </a>
-              </aside>
             </section>
           </>
         ) : (
@@ -549,6 +552,15 @@ function MetricCard({
 function Fact({ label, value }: { label: string; value: string }) {
   return (
     <div>
+      <span>{label}</span>
+      <strong>{value}</strong>
+    </div>
+  );
+}
+
+function DetailItem({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="detail-item">
       <span>{label}</span>
       <strong>{value}</strong>
     </div>
@@ -714,6 +726,21 @@ function formatHour(timestamp: number, timezone: string): string {
     hour12: false,
     timeZone: timezone,
   }).format(new Date(timestamp));
+}
+
+function getTimeMode(date: Date, timezone = "UTC"): TimeMode {
+  const hour = Number(
+    new Intl.DateTimeFormat("en-GB", {
+      hour: "2-digit",
+      hourCycle: "h23",
+      timeZone: timezone,
+    }).format(date),
+  );
+
+  if (hour >= 5 && hour < 11) return "morning";
+  if (hour >= 11 && hour < 17) return "day";
+  if (hour >= 17 && hour < 21) return "evening";
+  return "night";
 }
 
 function directionLabel(degrees: number): string {

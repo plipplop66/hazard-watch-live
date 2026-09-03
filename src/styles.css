@@ -47,6 +47,60 @@ button:disabled {
     radial-gradient(circle at 80% 0%, rgba(27, 123, 128, 0.25), transparent 28rem),
     linear-gradient(145deg, #061924 0%, #082936 52%, #061b27 100%);
 }
+.hazard-app.mode-morning {
+  background:
+    radial-gradient(circle at 18% 0%, rgba(255, 201, 117, 0.36), transparent 31rem),
+    radial-gradient(circle at 88% 12%, rgba(113, 198, 237, 0.24), transparent 30rem),
+    linear-gradient(145deg, #183f5b 0%, #3b6376 52%, #1d405a 100%);
+}
+.hazard-app.mode-day {
+  background:
+    radial-gradient(circle at 77% 0%, rgba(118, 223, 244, 0.3), transparent 30rem),
+    radial-gradient(circle at 5% 90%, rgba(74, 151, 215, 0.24), transparent 28rem),
+    linear-gradient(145deg, #07527a 0%, #0b6b91 52%, #074a70 100%);
+}
+.hazard-app.mode-evening {
+  background:
+    radial-gradient(circle at 17% 0%, rgba(255, 161, 92, 0.32), transparent 30rem),
+    radial-gradient(circle at 84% 12%, rgba(157, 105, 202, 0.25), transparent 31rem),
+    linear-gradient(145deg, #2a1c4b 0%, #533451 52%, #261b43 100%);
+}
+.mode-morning .location-controls,
+.mode-morning .panel,
+.mode-morning .metric-card {
+  border-color: rgba(207, 235, 239, 0.2);
+}
+.mode-morning .location-controls,
+.mode-morning .panel {
+  background: rgba(21, 55, 74, 0.66);
+}
+.mode-morning .metric-card {
+  background: linear-gradient(145deg, rgba(44, 93, 105, 0.74), rgba(18, 55, 70, 0.87));
+}
+.mode-day .location-controls,
+.mode-day .panel,
+.mode-day .metric-card {
+  border-color: rgba(193, 237, 246, 0.2);
+}
+.mode-day .location-controls,
+.mode-day .panel {
+  background: rgba(5, 65, 100, 0.67);
+}
+.mode-day .metric-card {
+  background: linear-gradient(145deg, rgba(8, 103, 139, 0.75), rgba(4, 55, 90, 0.88));
+}
+.mode-evening .location-controls,
+.mode-evening .panel,
+.mode-evening .metric-card {
+  border-color: rgba(244, 204, 226, 0.19);
+}
+.mode-evening .location-controls,
+.mode-evening .panel {
+  background: rgba(48, 30, 69, 0.69);
+}
+.mode-evening .metric-card {
+  background: linear-gradient(145deg, rgba(94, 58, 91, 0.76), rgba(42, 28, 66, 0.9));
+}
 .ambient {
   pointer-events: none;
   position: absolute;
@@ -390,8 +444,7 @@ button:disabled {
   color: #8be8d9;
 }
 .location-title h2,
-.panel-heading h2,
-.data-panel h2 {
+.panel-heading h2 {
   margin: 0;
   color: #f0f9f8;
   font-size: 20px;
@@ -431,6 +484,82 @@ button:disabled {
 }
 .updated-at button:hover {
   background: rgba(96, 197, 184, 0.2);
+}
+.more-details {
+  position: relative;
+}
+.more-details summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 9px;
+  border: 1px solid rgba(150, 215, 210, 0.2);
+  border-radius: 8px;
+  color: #99dcd3;
+  background: rgba(96, 197, 184, 0.1);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 700;
+  list-style: none;
+  transition: background 0.2s ease;
+}
+.more-details summary::-webkit-details-marker {
+  display: none;
+}
+.more-details summary:hover {
+  background: rgba(96, 197, 184, 0.2);
+}
+.more-details summary svg {
+  transition: transform 0.2s ease;
+}
+.more-details[open] summary svg {
+  transform: rotate(180deg);
+}
+.details-menu {
+  position: absolute;
+  z-index: 10;
+  top: calc(100% + 8px);
+  right: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  width: min(360px, calc(100vw - 32px));
+  gap: 1px;
+  overflow: hidden;
+  padding: 1px;
+  border: 1px solid rgba(174, 229, 225, 0.2);
+  border-radius: 12px;
+  background: rgba(144, 206, 202, 0.17);
+  box-shadow: 0 18px 46px rgba(0, 9, 17, 0.35);
+  backdrop-filter: blur(18px);
+}
+.detail-item {
+  min-height: 62px;
+  padding: 10px 11px;
+  background: rgba(5, 34, 47, 0.96);
+}
+.detail-item span,
+.detail-item strong {
+  display: block;
+}
+.detail-item span {
+  color: #8eafb1;
+  font-size: 10px;
+}
+.detail-item strong {
+  margin-top: 5px;
+  color: #edfafa;
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1.25;
+}
+.mode-morning .detail-item {
+  background: rgba(16, 52, 70, 0.97);
+}
+.mode-day .detail-item {
+  background: rgba(4, 60, 95, 0.97);
+}
+.mode-evening .detail-item {
+  background: rgba(44, 28, 65, 0.97);
 }
 .spinning {
   animation: spin 1s linear infinite;
@@ -544,7 +673,7 @@ button:disabled {
 }
 .bottom-grid {
   display: grid;
-  grid-template-columns: 1.42fr 0.58fr;
+  grid-template-columns: 1fr;
   gap: 14px;
   margin-top: 14px;
 }
@@ -556,8 +685,7 @@ button:disabled {
 }
 .weather-panel,
 .precipitation-panel,
-.alerts-panel,
-.data-panel {
+.alerts-panel {
   padding: 20px;
 }
 .panel-heading {
@@ -803,73 +931,6 @@ button:disabled {
   font-size: 11px;
   line-height: 1.45;
 }
-.data-panel {
-  position: relative;
-  overflow: hidden;
-  background: linear-gradient(145deg, rgba(18, 78, 84, 0.76), rgba(9, 46, 56, 0.85));
-}
-.data-panel::after {
-  position: absolute;
-  right: -75px;
-  bottom: -85px;
-  width: 230px;
-  height: 230px;
-  border: 1px solid rgba(116, 226, 206, 0.15);
-  border-radius: 50%;
-  box-shadow:
-    0 0 0 28px rgba(116, 226, 206, 0.04),
-    0 0 0 57px rgba(116, 226, 206, 0.03);
-  content: "";
-}
-.data-panel h2 {
-  margin-top: 6px;
-}
-.data-panel > p:not(.panel-eyebrow) {
-  position: relative;
-  z-index: 1;
-  margin: 10px 0 17px;
-  color: #b2d0cf;
-  font-size: 12px;
-  line-height: 1.55;
-}
-.data-panel dl {
-  position: relative;
-  z-index: 1;
-  margin: 0;
-}
-.data-panel dl div {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 8px 0;
-  border-top: 1px solid rgba(174, 229, 225, 0.13);
-}
-.data-panel dt {
-  color: #87abaa;
-  font-size: 10px;
-}
-.data-panel dd {
-  margin: 0;
-  color: #ddf2ef;
-  font-size: 10px;
-  font-weight: 600;
-  text-align: right;
-}
-.data-panel a {
-  display: inline-flex;
-  position: relative;
-  z-index: 1;
-  align-items: center;
-  gap: 5px;
-  margin-top: 18px;
-  color: #9df0dd;
-  font-size: 11px;
-  font-weight: 700;
-  text-decoration: none;
-}
-.data-panel a:hover {
-  color: #dbfff5;
-}
 .loading-card {
   display: flex;
   align-items: center;
@@ -937,9 +998,6 @@ button:disabled {
   .content-grid,
   .bottom-grid {
     grid-template-columns: 1fr;
-  }
-  .data-panel {
-    min-height: 260px;
   }
 }
 @media (max-width: 840px) {
@@ -1012,8 +1070,7 @@ button:disabled {
   }
   .weather-panel,
   .precipitation-panel,
-  .alerts-panel,
-  .data-panel {
+  .alerts-panel {
     padding: 16px;
   }
   .condition-temperature {
@@ -1043,5 +1100,10 @@ button:disabled {
   }
   .updated-at span {
     width: 100%;
+  }
+  .details-menu {
+    right: auto;
+    left: 0;
+    width: min(360px, calc(100vw - 30px));
   }
 }
